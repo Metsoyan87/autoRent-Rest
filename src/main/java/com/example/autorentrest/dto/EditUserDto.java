@@ -11,7 +11,7 @@ public class EditUserDto {
 
 
     private String email;
-    private String phoneNumber;
+    private String phone;
     private String password;
     private String driverLicense;
     private String card;

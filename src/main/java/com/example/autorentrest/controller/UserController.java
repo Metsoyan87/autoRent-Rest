@@ -9,17 +9,12 @@ import com.example.autorentrest.service.UserService;
 import com.example.autorentrest.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,44 +27,36 @@ public class UserController {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
-    @Value("${AutoRent.image.folder}")
-    private String folderPath;
 
     @GetMapping("/users")
     public List<User> getUsers() {
+        log.info("called by {controller users }");
         return userService.getAllUser();
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity deleteById(@PathVariable("id") int id) {
         userService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
         Optional<User> byId = Optional.ofNullable(userService.findUserById(id));
-        if (byId.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(byId.get());
-    }
-
-    public byte[] getUserImage(String fileName) throws IOException {
-        InputStream inputStream = new FileInputStream(folderPath + File.separator + fileName);
-        return IOUtils.toByteArray(inputStream);
+        return byId.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @PostMapping("/user")
-    public ResponseEntity<?> register(@RequestBody UserDto userDto) {
-        Optional<User> existingUser = userRepository.findByEmail(userDto.getEmail());
+    public ResponseEntity<?> register(@RequestBody CreateUserDto createUserDto) {
+        Optional<User> existingUser = userRepository.findByEmail(createUserDto.getEmail());
         if (existingUser.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
-        User user = userMapper.map(userDto);
+
+        User user = userMapper.map(createUserDto);
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return ResponseEntity.ok(userMapper.map(userRepository.save(user)));
+        return ResponseEntity.ok(userMapper.map(userService.save(user)));
     }
 
 
@@ -90,9 +77,10 @@ public class UserController {
     }
 
     @PostMapping("/users/edit/{id}")
-    public ResponseEntity<ResponseEntity<UserResponseDto>> updateUser(@PathVariable int id,
-                                                                      @RequestBody EditUserDto editUserDto) {
-        return ResponseEntity.ok(userService.update(editUserDto, id));
+    public EditUserDto updateUser(@PathVariable int id,
+                                  @RequestBody EditUserDto editUserDto) {
+        userService.editUser(id, editUserDto);
+        return editUserDto;
     }
 
 

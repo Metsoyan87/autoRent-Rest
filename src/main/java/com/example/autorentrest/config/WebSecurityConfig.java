@@ -37,10 +37,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/users").hasAnyAuthority(String.valueOf(Role.ADMIN))
-                .antMatchers(HttpMethod.DELETE, "/users/{id}").hasAnyAuthority("ADMIN")
-                .antMatchers("/users/auth").permitAll()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
+//                .antMatchers(HttpMethod.GET, "/users").hasAnyAuthority("ADMIN")
+//                .antMatchers(HttpMethod.DELETE, "/users/{id}").hasAnyAuthority("ADMIN")
+//                .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .anyRequest().permitAll();
 
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

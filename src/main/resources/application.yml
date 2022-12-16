@@ -6,9 +6,12 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant-path-matcher
-  jpa:
-    hibernate:
-      ddl-auto: update
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+  config:
+    additional-location: C:\Users\metso\IdeaProjects\autoRent-Rest\images
+
 jwt:
   secret: k205j@dkjf0%^@
   expiration: 330000
@@ -19,10 +22,22 @@ logging:
       file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz # by date
       max-file-size: 10MB # by size
   file:
-    name: /Users/karen/data/lessons/Java 2022/restexample/restexample/log/application.log
+    name: C:\Users\metso\IdeaProjects\autoRent-Rest\log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   level:
     root: info
     com.example: info
+
+mail:
+  host: smtp.gmail.com
+  port: 587
+  username: metsoyan11@gmail.com
+  password: drewelymasfqnwap
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
