@@ -1,33 +1,20 @@
 package com.example.autorentrest.service;
 
 import com.example.autorentrest.dto.EditUserDto;
-import com.example.autorentrest.mapper.UserMapper;
-import com.example.autorentrest.model.Role;
 import com.example.autorentrest.model.User;
 import com.example.autorentrest.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -37,16 +24,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    private final UserMapper userMapper;
-    private final MailService mailService;
-
-
-    private String folderPath;
-
     public List<User> getAllUser() {
-        List<User> all = userRepository.findAll();
-        return all;
+         return userRepository.findAll();
     }
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -56,7 +35,7 @@ public class UserService {
                 .findById(Id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
-    public User save(User user) {
+    public User save(User user) throws MessagingException {
         if (user == null) {
             throw new RuntimeException("User can't be null");
         }
@@ -105,8 +84,4 @@ public class UserService {
         userRepository.save(user);
         return ResponseEntity.ok(user);
     }
-
-
-
-
 }

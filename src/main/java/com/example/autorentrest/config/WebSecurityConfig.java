@@ -1,7 +1,5 @@
 package com.example.autorentrest.config;
 
-import com.example.autorentrest.model.Role;
-import com.example.autorentrest.model.User;
 import com.example.autorentrest.security.CurrentUserDetailServiceImpl;
 import com.example.autorentrest.security.JWTAuthenticationTokenFilter;
 import com.example.autorentrest.security.JwtAuthenticationEntryPoint;
@@ -37,9 +35,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()
                 .authorizeRequests()
-//                .antMatchers(HttpMethod.GET, "/users").hasAnyAuthority("ADMIN")
-//                .antMatchers(HttpMethod.DELETE, "/users/{id}").hasAnyAuthority("ADMIN")
-//                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/users").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/users/{id}").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/users/{id}").hasAnyAuthority("ADMIN")
                 .anyRequest().permitAll();
 
         http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
